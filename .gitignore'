@@ -1,8 +1,15 @@
-
-# I will mostly use pycharm for the projects and notes hence .idea folder will always generated.\
-
+# PyCharm
 .idea/
 
-# My notes mostly will be in .md file and hence all other note or texts will be ignored
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
 
+# Notes
 *.txt
+
+# OS files
+.DS_Store
+Thumbs.db
