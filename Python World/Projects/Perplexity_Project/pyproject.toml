@@ -1,0 +1,24 @@
+[project]
+name = "perplexity-project"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "rohitrajvaidya5",email = "rohit.rajvaidyaa@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "openai-whisper (>=20250625,<20250626)",
+    "speechrecognition (>=3.14.3,<4.0.0)",
+    "pyaudio (>=0.2.14,<0.3.0)",
+    "pyttsx3 (>=2.99,<3.0)",
+    "gtts (>=2.5.4,<3.0.0)",
+    "pvporcupine (>=3.0.5,<4.0.0)",
+    "vosk (>=0.3.45,<0.4.0)",
+    "google-generativeai (>=0.8.5,<0.9.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
