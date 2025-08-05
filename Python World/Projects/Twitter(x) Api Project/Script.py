@@ -115,7 +115,7 @@ def get_validated_tweet_text(file_path="tweet.txt", tweet_limit=280):
 def main():
     tweet_text = get_validated_tweet_text()
     if not tweet_text:
-        return  # Exit if tweet is invalid
+        return
 
     tweet_client = authenticate_twitter()
     if not tweet_client:
