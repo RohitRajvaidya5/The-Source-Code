@@ -1,3 +1,0 @@
-Hi is a common, informal greeting in English, typically used to acknowledge someone in a friendly and casual way. It is less formal than "hello" and is appropriate in most everyday situations, except for the most formal occasions.
-
-The word "hi" has been in use since at least the Middle English period, with the earliest known usage dating back to around 1475. It is widely recognized and used across English-speaking cultures as a simple way to initiate conversation or greet someone you know. Alternative greetings with similar meaning include "hey," "hello," and "howdy".
