@@ -10,6 +10,7 @@ env/
 # Notes
 *.txt
 *.png
+*.log
 
 # OS files
 .DS_Store

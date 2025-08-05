@@ -1,7 +1,31 @@
 import tweepy
 import os
 import emoji
+import logging
+import time
 
+logging.basicConfig(
+    filename="tweet_log.log",           # Log file name
+    level=logging.INFO,                 # Log level
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    filemode='a'                        # Append mode; use 'w' to overwrite each run
+)
+
+
+def retry_tweet(client, tweet_texts, retries=3, delay=5):
+    for attempt in range(retries):
+        try:
+            client.create_tweet(text=tweet_texts)
+            logging.info("Tweet posted successfully.")
+            print("Tweet posted successfully.")
+            return
+        except tweepy.errors.TooManyRequests as e:
+            logging.warning("Rate limit hit. Retrying...")
+            time.sleep(delay * (attempt + 1))
+        except Exception as e:
+            logging.error(f"Failed to post tweet: {e}")
+            return
 
 def authenticate_twitter():
     try:
@@ -16,15 +40,15 @@ def authenticate_twitter():
         return client
 
     except Exception as error:
-        print(f"Authentication failed: {error}")
-
+        logging.error(f"Authentication failed: {error}")
+        return None
 
 def get_tweet_text():
     try:
         # Read tweet content from text file
         with open("tweet.txt", "r", encoding="utf-8") as tweet_file:
             tweet_texts = tweet_file.read().strip()
-            print(f"Tweet text ({len(tweet_texts)} chars):", repr(tweet_texts))
+            logging.info(f"Tweet text ({len(tweet_texts)} chars): {repr(tweet_texts)}")
 
         if not tweet_texts:
             raise ValueError("Tweet text is empty. Please add content to tweet.txt.")
@@ -32,37 +56,35 @@ def get_tweet_text():
         return tweet_texts
 
     except FileNotFoundError:
-        print("Error: tweet.txt file not found.")
+        logging.error("Error: tweet.txt file not found.")
     except ValueError as ve:
-        print("ValueError:", ve)
+        logging.error(f"ValueError: {ve}")
     except Exception as e:
-        print("An unexpected error occurred while reading tweet:", e)
+        logging.error(f"An unexpected error occurred while reading tweet: {e}")
     return None
-
 
 def tweet_with_text(client, tweet_texts):
     try:
         # Post the tweet using Twitter API
         response = client.create_tweet(text=tweet_texts)
-        print("Tweet posted successfully:", response)
+        logging.info(f"Tweet posted successfully: {response}")
+        print("Tweet posted successfully")
 
     except tweepy.errors.Forbidden as e:
-        print("Forbidden error (possibly duplicate tweet or restricted content):", e)
+        logging.error(f"Forbidden error (possibly duplicate tweet or restricted content): {e}")
     except tweepy.errors.TooManyRequests as e:
-        print("Rate limit exceeded. Try again later:", e)
+        logging.error(f"Rate limit exceeded. Try again later: {e}")
     except tweepy.TweepyException as e:
-        print("Tweepy error occurred:", e)
+        logging.error(f"Tweepy error occurred: {e}")
     except FileNotFoundError:
-        print("Error: tweet.txt file not found.")
+        logging.error("Error: tweet.txt file not found.")
     except ValueError as ve:
-        print("ValueError:", ve)
+        logging.error(f"ValueError: {ve}")
     except Exception as e:
-        print("An unexpected error occurred:", e)
-
+        logging.error(f"An unexpected error occurred: {e}")
 
 def is_emoji(char):
     return char in emoji.EMOJI_DATA
-
 
 def check_tweet_length():
     word_count = 0
@@ -75,20 +97,17 @@ def check_tweet_length():
                     word_count += 1
 
         tweet_limit = 280
-        if word_count <= tweet_limit:
-            return True
-        return False
-
+        return word_count <= tweet_limit
 
 def get_validated_tweet_text(file_path="tweet.txt", tweet_limit=280):
     try:
         # Read tweet content
         with open(file_path, "r", encoding="utf-8") as tweet_file:
             tweet_text = tweet_file.read().strip()
-            print(f"Tweet text ({len(tweet_text)} raw chars):", repr(tweet_text))
+            logging.info(f"Tweet text ({len(tweet_text)} raw chars): {repr(tweet_text)}")
 
         if not tweet_text:
-            print("Error: Tweet text is empty. Please add content to tweet.txt.")
+            logging.error("Error: Tweet text is empty. Please add content to tweet.txt.")
             return None
 
         # Calculate weighted character count
@@ -96,21 +115,20 @@ def get_validated_tweet_text(file_path="tweet.txt", tweet_limit=280):
         for char in tweet_text:
             total_count += 2 if char in emoji.EMOJI_DATA else 1
 
-        print(f"Calculated tweet length: {total_count} characters (limit: {tweet_limit})")
+        logging.info(f"Calculated tweet length: {total_count} characters (limit: {tweet_limit})")
 
         if total_count > tweet_limit:
-            print(f"Error: Tweet exceeds {tweet_limit} character limit.")
+            logging.error(f"Error: Tweet exceeds {tweet_limit} character limit.")
             return None
 
         return tweet_text
 
     except FileNotFoundError:
-        print(f"Error: {file_path} not found.")
+        logging.error(f"Error: {file_path} not found.")
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        logging.error(f"An unexpected error occurred: {e}")
 
     return None
-
 
 def main():
     tweet_text = get_validated_tweet_text()
@@ -119,15 +137,13 @@ def main():
 
     tweet_client = authenticate_twitter()
     if not tweet_client:
-        print("Authentication failed.")
+        logging.error("Authentication failed.")
         return
 
     try:
         tweet_with_text(tweet_client, tweet_text)
-        print("Tweet posted successfully.")
     except Exception as e:
-        print(f"Failed to post tweet: {e}")
-
+        logging.error(f"Failed to post tweet: {e}")
 
 if __name__ == "__main__":
     main()
