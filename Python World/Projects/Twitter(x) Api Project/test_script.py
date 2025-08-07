@@ -2,9 +2,9 @@ import pytest
 from unittest.mock import patch, MagicMock, mock_open
 import tweepy
 import builtins
-
-# Import your functions here
-from script import authenticate_twitter, get_tweet_text, tweet_with_text
+from tweepy.errors import Forbidden, TooManyRequests
+from requests.models import Response
+from Script import authenticate_twitter, get_tweet_text, tweet_with_text
 
 
 def test_authenticate_twitter_success(monkeypatch):
@@ -54,14 +54,26 @@ def test_tweet_with_text_success():
 
 def test_tweet_with_text_forbidden_error():
     client = MagicMock()
-    client.create_tweet.side_effect = tweepy.errors.Forbidden("Forbidden")
+
+    # Create a fake response object
+    response = Response()
+    response.status_code = 403
+
+    # Raise the Forbidden error with response
+    client.create_tweet.side_effect = Forbidden(response=response)
 
     tweet_with_text(client, "Test forbidden")
 
 
 def test_tweet_with_text_rate_limit():
     client = MagicMock()
-    client.create_tweet.side_effect = tweepy.errors.TooManyRequests("Rate limit exceeded")
+
+    # Create a fake response object
+    response = Response()
+    response.status_code = 429
+
+    # Raise the TooManyRequests error with response
+    client.create_tweet.side_effect = TooManyRequests(response=response)
 
     tweet_with_text(client, "Test rate limit")
 
