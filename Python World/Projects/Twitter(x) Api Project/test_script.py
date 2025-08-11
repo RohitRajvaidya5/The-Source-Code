@@ -1,5 +1,4 @@
-import pytest
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import MagicMock, mock_open
 import tweepy
 import builtins
 from tweepy.errors import Forbidden, TooManyRequests
