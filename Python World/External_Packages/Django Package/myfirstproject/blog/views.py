@@ -14,6 +14,10 @@ def about(request):
 def hello_user(request, name):
     return HttpResponse(f"Hello, {name.capitalize()}!")
 
+
+def simple_template(request):
+    return render(request, 'blog/test.html')
+
 def post_detail(request, id_number):
     post = get_object_or_404(Post, id=id_number)
     # return HttpResponse(f"<h1>{post.title}</h1><p>{post.body}</p>")

@@ -7,4 +7,5 @@ urlpatterns = [
     path('hello/<str:name>/', views.hello_user, name='hello_user'),
     path('post/<int:id_number>/', views.post_detail, name='post_detail'),
     path('posts/', views.post_list, name='post_list'),
+    path('simple_template/', views.simple_template, name='simple_template'),
 ]
